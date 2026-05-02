@@ -1,0 +1,64 @@
+{
+  "model_name": "gaussian_naive_bayes",
+  "features": [
+    "heart_rate",
+    "bp_systolic",
+    "bp_diastolic",
+    "spo2",
+    "body_temp_c"
+  ],
+  "classes": {
+    "normal": {
+      "prior": 0.5191666666666667,
+      "mean": {
+        "heart_rate": 78.186726,
+        "bp_systolic": 117.684093,
+        "bp_diastolic": 75.96504,
+        "spo2": 96.949631,
+        "body_temp_c": 36.801396
+      },
+      "variance": {
+        "heart_rate": 69.059662,
+        "bp_systolic": 108.451901,
+        "bp_diastolic": 54.511818,
+        "spo2": 1.319307,
+        "body_temp_c": 0.124182
+      }
+    },
+    "warning": {
+      "prior": 0.04,
+      "mean": {
+        "heart_rate": 68.893333,
+        "bp_systolic": 129.5525,
+        "bp_diastolic": 82.398542,
+        "spo2": 95.758542,
+        "body_temp_c": 37.305625
+      },
+      "variance": {
+        "heart_rate": 288.014899,
+        "bp_systolic": 209.383823,
+        "bp_diastolic": 101.668294,
+        "spo2": 4.943072,
+        "body_temp_c": 0.268012
+      }
+    },
+    "critical": {
+      "prior": 0.44083333333333335,
+      "mean": {
+        "heart_rate": 83.561758,
+        "bp_systolic": 157.420832,
+        "bp_diastolic": 100.070378,
+        "spo2": 90.20828,
+        "body_temp_c": 37.413875
+      },
+      "variance": {
+        "heart_rate": 1215.032883,
+        "bp_systolic": 489.777621,
+        "bp_diastolic": 194.423585,
+        "spo2": 19.564613,
+        "body_temp_c": 3.289517
+      }
+    }
+  },
+  "training_records": 1200
+}

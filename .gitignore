@@ -1,0 +1,27 @@
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/*.db
+venv/
+__pycache__/
+*.pyc
+*.db
+.pytest_cache/
+backend/.pytest_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Env
+backend/.env
+.env
+
+# ML model weights and generated datasets (regenerate via train script)
+backend/ml/health_risk_model.pth
+data/synthetic_labeled_sequences.json
+data/synthetic_labeled_vitals.csv
+
+# Personal / non-project files
+akin 1-3.docx
+akin.txt
