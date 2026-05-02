@@ -1,0 +1,19 @@
+# ── UI ──────────────────────────────────────────────
+streamlit==1.57.0
+pandas==3.0.2
+requests==2.33.1
+plotly>=5.18.0
+
+# ── API ─────────────────────────────────────────────
+fastapi==0.115.6
+starlette==0.41.3
+uvicorn[standard]==0.32.1
+sqlalchemy==2.0.36
+python-multipart==0.0.20
+pydantic-settings==2.6.1
+httpx==0.28.0
+
+# ── ML (CPU-only for deployment) ────────────────────
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch --index-url https://download.pytorch.org/whl/cpu
+scikit-learn>=1.4.0
