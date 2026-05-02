@@ -116,8 +116,29 @@ st.markdown(
         background-color: #f8fafc;
     }
     
-    /* Hide top header bar for cleaner look */
-    header {visibility: hidden;}
+    /* Hide only the deploy/toolbar area, not the whole header */
+    [data-testid="stToolbar"] { visibility: hidden; }
+    [data-testid="stHeader"] { background-color: transparent !important; height: 0 !important; min-height: 0 !important; }
+
+    /* Hide only the CLOSE button inside the sidebar (prevents accidental collapse) */
+    /* The expand arrow (collapsedControl) remains visible so users can always reopen it */
+    [data-testid="stSidebarCollapseButton"] { display: none !important; }
+    button[kind="header"][aria-label="Close sidebar"] { display: none !important; }
+
+    /* Style the expand arrow to be clearly visible in brand blue */
+    [data-testid="collapsedControl"] {
+        color: #2563eb !important;
+        background: rgba(37, 99, 235, 0.08) !important;
+        border-radius: 0 8px 8px 0 !important;
+        border: 1px solid rgba(37, 99, 235, 0.2) !important;
+        border-left: none !important;
+    }
+    [data-testid="collapsedControl"]:hover {
+        background: rgba(37, 99, 235, 0.15) !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        fill: #2563eb !important;
+    }
 
     /* Sidebar Styling */
     .hp-brand {
