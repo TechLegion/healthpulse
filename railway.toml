@@ -1,6 +1,16 @@
 [build]
 builder = "nixpacks"
 
+[build.nixpacksPlan.phases.install]
+cmds = [
+  "python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt"
+]
+
+[build.nixpacksPlan.phases.build]
+cmds = [
+  "pip install -r requirements.txt"
+]
+
 [deploy]
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
