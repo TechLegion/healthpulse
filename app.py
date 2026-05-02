@@ -120,31 +120,27 @@ st.markdown(
     [data-testid="stToolbar"] { visibility: hidden; }
     [data-testid="stHeader"] { background-color: transparent !important; height: 0 !important; min-height: 0 !important; }
 
-    /* Hide only the CLOSE button inside the sidebar (prevents accidental collapse) */
-    /* The expand arrow (collapsedControl) remains visible so users can always reopen it */
-    [data-testid="stSidebarCollapseButton"] { display: none !important; }
-    button[kind="header"][aria-label="Close sidebar"] { display: none !important; }
-
     /* Style the expand arrow to be clearly visible in brand blue */
     [data-testid="collapsedControl"] {
         color: #2563eb !important;
-        background: rgba(37, 99, 235, 0.08) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
         border-radius: 0 8px 8px 0 !important;
-        border: 1px solid rgba(37, 99, 235, 0.2) !important;
-        border-left: none !important;
-    }
-    [data-testid="collapsedControl"]:hover {
-        background: rgba(37, 99, 235, 0.15) !important;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1) !important;
+        z-index: 1000 !important;
     }
     [data-testid="collapsedControl"] svg {
         fill: #2563eb !important;
     }
 
     /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background-color: #0f172a !important;
+        color: #ffffff !important;
+    }
     .hp-brand {
         font-size: 20px;
         font-weight: 800;
-        color: #ffffff;
+        color: #ffffff !important;
         margin-bottom: 2px;
         display: flex;
         align-items: center;
@@ -202,18 +198,19 @@ st.markdown(
         width: 100% !important;
     }
     [data-testid="stSidebar"] [data-testid="stRadio"] label p {
-        color: inherit !important;
+        color: #cbd5e1 !important;
+        font-weight: 500 !important;
     }
     [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.05) !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover p {
         color: #ffffff !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label[data-checked="true"],
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) {
-        background: rgba(37, 99, 235, 0.15) !important;
+    [data-testid="stSidebar"] [data-testid="stRadio"] label[data-checked="true"] p,
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p {
         color: #60a5fa !important;
         font-weight: 600 !important;
-        border-left: 3px solid #3b82f6 !important;
     }
     /* Hide ONLY the radio circle dot, keep text visible */
     [data-testid="stSidebar"] [data-testid="stRadio"] input[type="radio"] {
@@ -532,7 +529,7 @@ with st.sidebar:
     else:
         st.error("API Offline")
     st.markdown("---")
-    st.caption("AI-driven deep learning portal.")
+    st.markdown('<p style="color: #94a3b8; font-size: 11px;">AI-driven deep learning portal.</p>', unsafe_allow_html=True)
 
 if not backend_online:
     st.error("The FastAPI Backend is currently offline. Please start the backend (`python -m uvicorn app.main:app`) to use the application.")
@@ -561,12 +558,18 @@ monitoring_tick()
 
 current_vitals = st.session_state.vitals
 summary = api_get("/api/summary")
-if not summary:
-    st.error("Unable to fetch summary from backend.")
-    st.stop()
 
-prediction = summary.get("prediction", {})
-alerts = summary.get("active_alerts", [])
+# --- GRACEFUL BACKEND INITIALIZATION ---
+if not summary:
+    with st.sidebar:
+        st.warning("Syncing with backend...")
+    # Provide safe defaults so the UI doesn't crash or hide
+    prediction = {"risk_score": 0, "risk_level": "Stabilizing", "drivers": ["Initializing..."]}
+    alerts = []
+else:
+    prediction = summary.get("prediction", {})
+    alerts = summary.get("active_alerts", [])
+
 risk_score = prediction.get("risk_score", 0)
 risk_level = prediction.get("risk_level", "Unknown")
 risk_drivers = prediction.get("drivers", ["None"])

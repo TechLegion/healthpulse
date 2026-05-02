@@ -1,0 +1,46 @@
+# Ignore virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Python cache and distribution
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data and large local assets
+data/
+archive/
+*.docx
+*.pdf
+*.csv
+!healthpulse_records.csv
+
+# Git and IDEs
+.git/
+.gitignore
+.vscode/
+.idea/
+.pytest_cache/
+
+# Local env files
+.env
+backend/.env

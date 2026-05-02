@@ -1,5 +1,0 @@
-# ── Streamlit Frontend ───────────────────────────────
-streamlit==1.57.0
-pandas==3.0.2
-requests==2.33.1
-plotly>=5.18.0
