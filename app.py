@@ -123,21 +123,30 @@ st.markdown(
         height: 2.875rem !important;
     }
 
-    /* Force sidebar to always remain visible — override Streamlit's slide-out transform */
-    [data-testid="stSidebar"] {
-        transform: none !important;
-        min-width: 16rem !important;
-        max-width: 16rem !important;
-        visibility: visible !important;
-        display: flex !important;
+    /* Make the collapsed expand arrow (>) highly visible on mobile and web */
+    [data-testid="collapsedControl"] {
+        color: #2563eb !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid rgba(37, 99, 235, 0.2) !important;
+        border-left: none !important;
+        border-radius: 0 8px 8px 0 !important;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.08) !important;
+        z-index: 999999 !important;
+        transition: all 0.2s ease !important;
     }
-
-    /* Hide both collapse and expand toggle buttons entirely */
-    [data-testid="stSidebarCollapseButton"],
-    [data-testid="collapsedControl"],
-    button[aria-label="Close sidebar"],
-    button[aria-label="Open sidebar"] {
-        display: none !important;
+    [data-testid="collapsedControl"]:hover {
+        background: rgba(37, 99, 235, 0.1) !important;
+    }
+    [data-testid="collapsedControl"] svg {
+        fill: #2563eb !important;
+    }
+    
+    /* Make the close arrow inside the sidebar visible but subtle */
+    [data-testid="stSidebarCollapseButton"] {
+        color: #94a3b8 !important;
+    }
+    [data-testid="stSidebarCollapseButton"] svg {
+        fill: #94a3b8 !important;
     }
 
     /* Sidebar Styling */
