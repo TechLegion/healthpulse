@@ -116,20 +116,28 @@ st.markdown(
         background-color: #f8fafc;
     }
     
-    /* Hide only the deploy/toolbar area, not the whole header */
-    [data-testid="stToolbar"] { visibility: hidden; }
-    [data-testid="stHeader"] { background-color: transparent !important; height: 0 !important; min-height: 0 !important; }
-
-    /* Style the expand arrow to be clearly visible in brand blue */
-    [data-testid="collapsedControl"] {
-        color: #2563eb !important;
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-radius: 0 8px 8px 0 !important;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1) !important;
-        z-index: 1000 !important;
+    /* Hide the deploy toolbar; keep header transparent and minimal */
+    [data-testid="stToolbar"] { visibility: hidden !important; }
+    [data-testid="stHeader"] {
+        background: transparent !important;
+        height: 2.875rem !important;
     }
-    [data-testid="collapsedControl"] svg {
-        fill: #2563eb !important;
+
+    /* Force sidebar to always remain visible — override Streamlit's slide-out transform */
+    [data-testid="stSidebar"] {
+        transform: none !important;
+        min-width: 16rem !important;
+        max-width: 16rem !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    /* Hide both collapse and expand toggle buttons entirely */
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="collapsedControl"],
+    button[aria-label="Close sidebar"],
+    button[aria-label="Open sidebar"] {
+        display: none !important;
     }
 
     /* Sidebar Styling */
