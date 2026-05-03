@@ -1,5 +1,6 @@
 [build]
 builder = "nixpacks"
+buildCommand = "echo 'Skipping custom build phase'"
 
 [deploy]
 restartPolicyType = "ON_FAILURE"
