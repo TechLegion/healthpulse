@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthPulse AI - Practitioner Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; padding: 2rem; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-icon { background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+        .brand-title { font-size: 24px; font-weight: 800; line-height: 1; color: var(--text-main); }
+        .brand-subtitle { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px; }
+        
+        /* Nav */
+        .nav-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
+        .nav-pill { padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; user-select: none; }
+        .nav-pill:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        .nav-pill.active { background: var(--surface); color: var(--text-main); border-color: var(--text-main); box-shadow: 0 0 0 1px var(--text-main); font-weight: 700; }
+        
+        /* Patient Header */
+        .patient-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
+        .patient-title { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .patient-subtitle { font-size: 14px; color: var(--text-muted); }
+        .actions { display: flex; gap: 12px; }
+        .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 6px;}
+        .btn-outline { background: var(--surface); border-color: var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: #f8fafc; border-color: #94a3b8;}
+        .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        /* Metrics */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s; }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+        .metric-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .metric-title { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .badge { font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge.normal { background: #dcfce7; color: #166534; }
+        .badge.high { background: #fee2e2; color: #991b1b; }
+        .badge.warning { background: #fef08a; color: #854d0e; }
+        .badge.critical { background: #fee2e2; color: #991b1b; }
+        .metric-val { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .metric-unit { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+        .metric-trend { font-size: 12px; color: var(--success); font-weight: 500; }
+        .metric-trend.neutral { color: var(--text-muted); }
+        
+        /* Main Layout */
+        .main-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+        
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 24px; }
+        .card-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        .card-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+        
+        /* Chat */
+        .chat-container { display: flex; flex-direction: column; height: 380px; }
+        .chat-history { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; padding-right: 8px; }
+        .chat-msg { padding: 12px 16px; border-radius: 12px; max-width: 85%; font-size: 14px; white-space: pre-wrap; }
+        .chat-msg.assistant { background: #f8fafc; border: 1px solid var(--border); align-self: flex-start; color: var(--text-main); }
+        .chat-msg.user { background: #f1f5f9; border: 1px solid var(--border); color: var(--text-main); align-self: flex-end; }
+        .chat-input-wrapper { display: flex; gap: 8px; }
+        .chat-input { flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; outline: none; }
+        .chat-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.2); }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid var(--border); font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        tr:hover { background: #f8fafc; }
+
+        /* Hide sections */
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+
+        /* Analysis drivers */
+        .driver-card { padding: 12px; border-radius: 8px; background: #f8fafc; border: 1px solid var(--border); margin-bottom: 8px; font-size: 14px; }
+        
+        /* FAQ */
+        .faq-item { margin-bottom: 16px; }
+        .faq-q { font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
+        .faq-a { font-size: 14px; color: var(--text-muted); }
+
+        /* Form */
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+        input[type="text"], input[type="email"], textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <div class="brand-icon">✚</div>
+                <div>
+                    <div class="brand-title">HealthPulse AI</div>
+                    <div class="brand-subtitle">Practitioner Portal</div>
+                </div>
+            </div>
+            <div>
+                <span id="api-status" class="badge warning" style="background:#f1f5f9;color:#64748b;">Connecting API...</span>
+            </div>
+        </header>
+        
+        <div class="nav-pills" id="nav-pills">
+            <div class="nav-pill active" data-page="dashboard">Dashboard</div>
+            <div class="nav-pill" data-page="records">Patient Records</div>
+            <div class="nav-pill" data-page="analysis">AI Analysis</div>
+            <div class="nav-pill" data-page="alerts">Clinical Alerts</div>
+            <div class="nav-pill" data-page="reports">Reports</div>
+            <div class="nav-pill" data-page="support">Support</div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <section id="section-dashboard" class="page-section active">
+            <div class="patient-header">
+                <div>
+                    <div class="patient-title">Patient Overview</div>
+                    <div class="patient-subtitle">Real-time health telemetry for <b>Sarah Johnson</b> • Last Updated: <span id="last-updated">--:--:--</span></div>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-outline" id="toggle-sim">⏸ Pause</button>
+                    <button class="btn btn-outline" onclick="exportData()">⬇ Export Data</button>
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header"><span class="metric-title">Heart Rate</span><span id="hr-badge" class="badge normal">NORMAL</span></div>
+                    <div class="metric-val"><span id="hr-val">--</span><span class="metric-unit">bpm</span></div>
+                    <div class="metric-trend">↗ vs baseline</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header"><span class="metric-title">Temperature</span><span id="temp-badge" class="badge normal">NORMAL</span></div>
+                    <div class="metric-val"><span id="temp-val">--</span><span class="metric-unit">°C</span></div>
+                    <div class="metric-trend neutral">- Stable</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header"><span class="metric-title">Oxygen</span><span id="o2-badge" class="badge normal">NORMAL</span></div>
+                    <div class="metric-val"><span id="o2-val">--</span><span class="metric-unit">%</span></div>
+                    <div class="metric-trend">↗ +1% from 1hr ago</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header"><span class="metric-title">Blood Pressure</span><span id="bp-badge" class="badge normal">NORMAL</span></div>
+                    <div class="metric-val"><span id="bp-val">--</span><span class="metric-unit">mmHg</span></div>
+                    <div class="metric-trend">✓ Optimal range</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header"><span class="metric-title">AI Risk Score</span><span id="risk-badge" class="badge normal">UNKNOWN</span></div>
+                    <div class="metric-val"><span id="risk-val">--</span><span class="metric-unit">/100</span></div>
+                    <div class="metric-trend warning">⚠ Drivers: <span id="risk-drivers-count">0</span></div>
+                </div>
+            </div>
+
+            <div class="main-layout">
+                <div class="card">
+                    <div class="card-title">Heart Rate Trends</div>
+                    <div class="card-subtitle">Detailed temporal analysis over the session</div>
+                    <div id="chart-container" style="height: 300px; width: 100%;"></div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title" style="display:flex;align-items:center;gap:8px;">
+                        <span style="background:var(--primary);color:white;padding:2px 6px;border-radius:6px;font-size:12px;">AI</span>
+                        HealthPulse AI Assistant
+                    </div>
+                    <div style="color:var(--success);font-size:12px;margin-bottom:16px;">● Online</div>
+                    <div class="chat-container">
+                        <div class="chat-history" id="chat-history">
+                            <div class="chat-msg assistant">Hello! I'm monitoring Sarah's vitals. Ask me anything about her current status.</div>
+                        </div>
+                        <form id="chat-form" class="chat-input-wrapper">
+                            <input type="text" id="chat-input" class="chat-input" placeholder="Type health query..." autocomplete="off">
+                            <button type="submit" style="display:none;"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Records Section -->
+        <section id="section-records" class="page-section">
+            <div class="card">
+                <div class="card-title">Historical Vitals</div>
+                <div class="card-subtitle">Complete log of all telemetry readings</div>
+                <div style="overflow-x: auto;">
+                    <table id="records-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>HR</th>
+                                <th>BP</th>
+                                <th>SpO2</th>
+                                <th>Temp</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="section-analysis" class="page-section">
+            <div class="main-layout">
+                <div class="card">
+                    <div class="card-title">Deep Risk Analysis</div>
+                    <div class="card-subtitle">AI-driven insight into patient stability</div>
+                    <div style="text-align:center; padding: 2rem;">
+                        <div id="analysis-score" style="font-size: 64px; font-weight: 800; color: var(--primary);">--</div>
+                        <div id="analysis-level-badge" class="badge normal" style="font-size: 18px; padding: 8px 16px;">UNKNOWN</div>
+                    </div>
+                    <div class="card-title" style="font-size: 16px; margin-top: 1rem;">Primary Drivers</div>
+                    <div id="analysis-drivers"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Clinical Trends</div>
+                    <div class="card-subtitle">Predictive trajectory</div>
+                    <div id="analysis-trends" style="font-size: 14px; color: var(--text-muted);"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alerts Section -->
+        <section id="section-alerts" class="page-section">
+            <div class="card">
+                <div class="card-title">Clinical Alert History</div>
+                <div class="card-subtitle">System-generated notifications and threshold violations</div>
+                <div style="overflow-x: auto;">
+                    <table id="alerts-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Severity</th>
+                                <th>Message</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="section-reports" class="page-section">
+            <div class="card">
+                <div class="card-title">System Evaluation</div>
+                <div class="card-subtitle">Comparison against typical benchmarks</div>
+                <div style="overflow-x: auto;">
+                    <table id="eval-table">
+                        <thead>
+                            <tr>
+                                <th>System</th>
+                                <th>Real-time</th>
+                                <th>AI Chat</th>
+                                <th>ML Risk</th>
+                                <th>Explainability</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Active Alert Rules</div>
+                <div id="rules-container" style="font-size: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
+            </div>
+        </section>
+
+        <!-- Support Section -->
+        <section id="section-support" class="page-section">
+            <div class="main-layout">
+                <div class="card">
+                    <div class="card-title">Frequently Asked Questions</div>
+                    <div class="faq-item">
+                        <div class="faq-q">How is the Risk Score calculated?</div>
+                        <div class="faq-a">The score is derived from a local Transformer-based model (FLAN-T5) combined with clinical heuristics across all vital trends over the last 24 readings.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Is this data real?</div>
+                        <div class="faq-a">This is a simulation portal using synthetic data for demonstration of AI monitoring capabilities.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">How do I export records?</div>
+                        <div class="faq-a">Click the "Export Data" button on the Dashboard to download the complete history as a CSV file.</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Contact Clinical Support</div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" placeholder="Dr. Sarah Smith">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="sarah.smith@vha.gov">
+                    </div>
+                    <div class="form-group">
+                        <label>Inquiry</label>
+                        <textarea rows="4" placeholder="How can we help?"></textarea>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%; justify-content: center;">Send Message</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin + "/api"; 
+        
+        // State
+        let hrHistory = Array(20).fill(75);
+        let simulationPaused = false;
+        let currentPage = 'dashboard';
+        
+        // DOM Elements
+        const apiStatus = document.getElementById('api-status');
+        const lastUpdated = document.getElementById('last-updated');
+        const toggleSimBtn = document.getElementById('toggle-sim');
+        const chatHistory = document.getElementById('chat-history');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const navPills = document.getElementById('nav-pills');
+        
+        // Page Switching
+        navPills.addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-pill')) {
+                const page = e.target.getAttribute('data-page');
+                switchPage(page);
+            }
+        });
+
+        const switchPage = (page) => {
+            currentPage = page;
+            // Update pills
+            document.querySelectorAll('.nav-pill').forEach(p => {
+                p.classList.toggle('active', p.getAttribute('data-page') === page);
+            });
+            // Update sections
+            document.querySelectorAll('.page-section').forEach(s => {
+                s.classList.toggle('active', s.id === `section-${page}`);
+            });
+            // Trigger page-specific load
+            loadPageData(page);
+        };
+
+        const loadPageData = (page) => {
+            if (page === 'records') fetchRecords();
+            if (page === 'analysis') fetchAnalysis();
+            if (page === 'alerts') fetchAlerts();
+            if (page === 'reports') fetchReports();
+        };
+
+        // Formatters
+        const formatTime = () => new Date().toLocaleTimeString('en-US', { hour12: false });
+        const formatDt = (iso) => new Date(iso).toLocaleString('en-US', { hour12: false });
+
+        // Chart
+        const initChart = () => {
+            const trace1 = {
+                y: hrHistory,
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#3b82f6', width: 2.5, shape: 'spline', smoothing: 1.3 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(59,130,246,0.10)'
+            };
+            const layout = {
+                margin: { l: 30, r: 10, t: 10, b: 30 },
+                xaxis: { showgrid: false },
+                yaxis: { showgrid: true, gridcolor: '#f1f5f9', range: [40, 140] },
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                font: { family: 'Inter', color: '#64748b' }
+            };
+            Plotly.newPlot('chart-container', [trace1], layout, {displayModeBar: false, responsive: true});
+        };
+        
+        const updateChart = (newHr) => {
+            hrHistory.push(newHr);
+            if(hrHistory.length > 20) hrHistory.shift();
+            if(currentPage === 'dashboard') {
+                Plotly.update('chart-container', {y: [hrHistory]});
+            }
+        };
+
+        // API interaction
+        const fetchSummary = async () => {
+            try {
+                const res = await fetch(`${API_URL}/summary`);
+                if (!res.ok) throw new Error("Network response was not ok");
+                const data = await res.json();
+                apiStatus.className = "badge normal";
+                apiStatus.innerText = "API CONNECTED";
+                
+                if (data.latest_vital) {
+                    const v = data.latest_vital;
+                    document.getElementById('hr-val').innerText = v.heart_rate;
+                    document.getElementById('temp-val').innerText = v.body_temp_c;
+                    document.getElementById('o2-val').innerText = v.spo2;
+                    document.getElementById('bp-val').innerText = `${v.bp_systolic}/${v.bp_diastolic}`;
+                    
+                    document.getElementById('hr-badge').innerText = (v.heart_rate > 100 || v.heart_rate < 60) ? "HIGH" : "NORMAL";
+                    document.getElementById('hr-badge').className = (v.heart_rate > 100 || v.heart_rate < 60) ? "badge high" : "badge normal";
+                    
+                    updateChart(v.heart_rate);
+                }
+                
+                if (data.prediction) {
+                    const p = data.prediction;
+                    document.getElementById('risk-val').innerText = p.risk_score;
+                    document.getElementById('risk-badge').innerText = p.risk_level.toUpperCase();
+                    document.getElementById('risk-badge').className = `badge ${p.risk_level}`;
+                    document.getElementById('risk-drivers-count').innerText = p.drivers.length;
+                }
+                lastUpdated.innerText = formatTime();
+            } catch (err) {
+                apiStatus.className = "badge high";
+                apiStatus.innerText = "API OFFLINE";
+                console.error("API error:", err);
+            }
+        };
+
+        const fetchRecords = async () => {
+            const res = await fetch(`${API_URL}/vitals?limit=50`);
+            const data = await res.json();
+            const tbody = document.querySelector('#records-table tbody');
+            tbody.innerHTML = data.map(v => `
+                <tr>
+                    <td>${formatDt(v.recorded_at)}</td>
+                    <td>${v.heart_rate}</td>
+                    <td>${v.bp_systolic}/${v.bp_diastolic}</td>
+                    <td>${v.spo2}%</td>
+                    <td>${v.body_temp_c}°C</td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#64748b;">${v.source}</span></td>
+                </tr>
+            `).join('');
+        };
+
+        const fetchAnalysis = async () => {
+            const res = await fetch(`${API_URL}/prediction`);
+            const data = await res.json();
+            document.getElementById('analysis-score').innerText = data.risk_score;
+            const badge = document.getElementById('analysis-level-badge');
+            badge.innerText = data.risk_level.toUpperCase();
+            badge.className = `badge ${data.risk_level}`;
+            
+            document.getElementById('analysis-drivers').innerHTML = data.drivers.map(d => `
+                <div class="driver-card">⚠ ${d}</div>
+            `).join('');
+            
+            document.getElementById('analysis-trends').innerHTML = data.trends.map(t => `
+                <div style="margin-bottom:8px;">• ${t}</div>
+            `).join('');
+        };
+
+        const fetchAlerts = async () => {
+            const res = await fetch(`${API_URL}/alerts?limit=50`);
+            const data = await res.json();
+            const tbody = document.querySelector('#alerts-table tbody');
+            tbody.innerHTML = data.map(a => `
+                <tr>
+                    <td>${formatDt(a.created_at)}</td>
+                    <td><span class="badge ${a.severity}">${a.severity}</span></td>
+                    <td>${a.message}</td>
+                    <td>${a.code}</td>
+                </tr>
+            `).join('');
+        };
+
+        const fetchReports = async () => {
+            const res = await fetch(`${API_URL}/evaluation`);
+            const data = await res.json();
+            
+            const tbody = document.querySelector('#eval-table tbody');
+            tbody.innerHTML = data.comparison.map(c => `
+                <tr>
+                    <td style="font-weight:600;">${c.system}</td>
+                    <td>${c.real_time_monitoring ? '✅' : '❌'}</td>
+                    <td>${c.patient_chat ? '✅' : '❌'}</td>
+                    <td>${c.ml_prediction}</td>
+                    <td>${c.explainable_alerts}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('rules-container').innerHTML = Object.entries(data.alert_rules).map(([name, rule]) => `
+                <div style="padding:10px; border:1px solid var(--border); border-radius:8px;">
+                    <div style="font-weight:600; color:var(--primary); margin-bottom:4px;">${name}</div>
+                    <div style="font-size:12px; color:var(--text-muted);">${rule.description}</div>
+                </div>
+            `).join('');
+        };
+
+        const exportData = async () => {
+            const res = await fetch(`${API_URL}/vitals?limit=1000`);
+            const data = await res.json();
+            const headers = ['recorded_at', 'heart_rate', 'bp_systolic', 'bp_diastolic', 'spo2', 'body_temp_c', 'source'];
+            const csv = [
+                headers.join(','),
+                ...data.map(v => headers.map(h => v[h]).join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `healthpulse_export_${new Date().getTime()}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        const generateVital = async () => {
+            if (simulationPaused) return;
+            const lastHr = hrHistory[hrHistory.length-1] || 75;
+            const newHr = Math.max(60, Math.min(120, lastHr + (Math.random() * 6 - 3)));
+            
+            const payload = {
+                heart_rate: Math.round(newHr),
+                bp_systolic: Math.round(120 + (Math.random()*10 - 5)),
+                bp_diastolic: Math.round(80 + (Math.random()*6 - 3)),
+                spo2: Math.round(98 + (Math.random()*2 - 1)),
+                body_temp_c: Number((36.5 + (Math.random()*0.5 - 0.25)).toFixed(1)),
+                source: "html-client"
+            };
+            
+            try {
+                await fetch(`${API_URL}/vitals`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                await fetchSummary();
+                if (currentPage !== 'dashboard') loadPageData(currentPage);
+            } catch (err) {}
+        };
+
+        // Chat
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+            
+            const uDiv = document.createElement('div');
+            uDiv.className = 'chat-msg user';
+            uDiv.innerText = msg;
+            chatHistory.appendChild(uDiv);
+            chatInput.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            try {
+                const res = await fetch(`${API_URL}/chat`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: msg, include_recent_vitals: true})
+                });
+                const data = await res.json();
+                
+                const aDiv = document.createElement('div');
+                aDiv.className = 'chat-msg assistant';
+                aDiv.innerText = data.reply;
+                chatHistory.appendChild(aDiv);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            } catch (err) {
+                const aDiv = document.createElement('div');
+                aDiv.className = 'chat-msg assistant';
+                aDiv.innerText = "Error connecting to AI backend.";
+                chatHistory.appendChild(aDiv);
+            }
+        });
+
+        // Controls
+        toggleSimBtn.addEventListener('click', () => {
+            simulationPaused = !simulationPaused;
+            toggleSimBtn.innerText = simulationPaused ? "▶ Resume" : "⏸ Pause";
+        });
+
+        // Setup
+        initChart();
+        fetchSummary();
+        setInterval(generateVital, 3000); 
+    </script>
+</body>
+</html>

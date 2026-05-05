@@ -100,7 +100,7 @@ def generate_data(previous=None):
         "timestamp": datetime.now(),
     }
 
-st.set_page_config(page_title="HealthPulse AI", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="HealthPulse AI", layout="wide", initial_sidebar_state="auto")
 _load_env_file()
 
 # --- CSS INJECTION FOR PREMIUM STYLING ---
@@ -123,22 +123,53 @@ st.markdown(
         height: 2.875rem !important;
     }
 
-    /* Make the collapsed expand arrow (>) highly visible on mobile and web */
+    /* ── Hamburger menu toggle when sidebar is collapsed ── */
+    @keyframes hamburgerPulse {
+        0%   { box-shadow: 2px 2px 10px rgba(37,99,235,0.15); }
+        50%  { box-shadow: 2px 2px 18px rgba(37,99,235,0.35); }
+        100% { box-shadow: 2px 2px 10px rgba(37,99,235,0.15); }
+    }
     [data-testid="collapsedControl"] {
         color: #2563eb !important;
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: 1px solid rgba(37, 99, 235, 0.2) !important;
+        background: #ffffff !important;
+        border: 1.5px solid rgba(37, 99, 235, 0.25) !important;
         border-left: none !important;
-        border-radius: 0 8px 8px 0 !important;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.08) !important;
+        border-radius: 0 12px 12px 0 !important;
+        box-shadow: 2px 2px 12px rgba(37,99,235,0.12) !important;
         z-index: 999999 !important;
-        transition: all 0.2s ease !important;
+        transition: all 0.25s cubic-bezier(.4,0,.2,1) !important;
+        padding: 10px 14px 10px 10px !important;
+        top: 0.7rem !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        animation: hamburgerPulse 2s ease-in-out 3 !important;
     }
     [data-testid="collapsedControl"]:hover {
-        background: rgba(37, 99, 235, 0.1) !important;
+        background: #eff6ff !important;
+        border-color: #2563eb !important;
+        box-shadow: 3px 3px 16px rgba(37,99,235,0.22) !important;
+        transform: scale(1.05) !important;
     }
+    /* Hide the default > arrow SVG completely */
     [data-testid="collapsedControl"] svg {
-        fill: #2563eb !important;
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+    /* Render a ☰ hamburger icon via CSS pseudo-element */
+    [data-testid="collapsedControl"]::after {
+        content: "\2630" !important;
+        font-size: 24px !important;
+        color: #2563eb !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+    }
+    [data-testid="collapsedControl"]:hover::after {
+        color: #1d4ed8 !important;
     }
     
     /* Make the close arrow inside the sidebar visible but subtle */
@@ -183,6 +214,9 @@ st.markdown(
         margin-left: 36px;
     }
     .hp-section-title {
+
+
+    .hp-section-title {
         font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
@@ -191,56 +225,58 @@ st.markdown(
         letter-spacing: 0.5px;
     }
 
-    /* ── Sidebar nav: style the radio as a clean nav list ── */
-    [data-testid="stSidebar"] [data-testid="stRadio"] > div {
+    /* ── Main nav: style the radio as horizontal pills ── */
+    [data-testid="stMain"] [data-testid="stRadio"] > div {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-bottom: 8px;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+    [data-testid="stMain"] [data-testid="stRadio"] label {
         display: flex !important;
         align-items: center !important;
-        padding: 11px 14px !important;
-        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        border-radius: 20px !important;
         font-size: 14px !important;
         font-weight: 500 !important;
-        color: #e2e8f0 !important;
+        color: #475569 !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
         cursor: pointer !important;
-        transition: background 0.15s, color 0.15s !important;
-        border-left: 3px solid transparent !important;
+        transition: all 0.2s !important;
         margin: 0 !important;
-        background: transparent !important;
-        line-height: 1.4 !important;
-        letter-spacing: 0.01em !important;
-        width: 100% !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label p {
-        color: #cbd5e1 !important;
-        font-weight: 500 !important;
+    [data-testid="stMain"] [data-testid="stRadio"] label p {
+        color: #475569 !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
+    [data-testid="stMain"] [data-testid="stRadio"] label:hover {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover p {
-        color: #ffffff !important;
+    [data-testid="stMain"] [data-testid="stRadio"] label[data-checked="true"],
+    [data-testid="stMain"] [data-testid="stRadio"] label:has(input:checked) {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border-color: #0f172a !important;
+        box-shadow: 0 0 0 1px #0f172a !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label[data-checked="true"] p,
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p {
-        color: #60a5fa !important;
-        font-weight: 600 !important;
+    [data-testid="stMain"] [data-testid="stRadio"] label[data-checked="true"] p,
+    [data-testid="stMain"] [data-testid="stRadio"] label:has(input:checked) p {
+        color: #0f172a !important;
+        font-weight: 700 !important;
     }
     /* Hide ONLY the radio circle dot, keep text visible */
-    [data-testid="stSidebar"] [data-testid="stRadio"] input[type="radio"] {
+    [data-testid="stMain"] [data-testid="stRadio"] input[type="radio"] {
         display: none !important;
     }
     /* Target the container of the radio circle specifically */
-    [data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child {
+    [data-testid="stMain"] [data-testid="stRadio"] label > div:first-child {
         display: none !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] span {
+    [data-testid="stMain"] [data-testid="stRadio"] span {
         margin-left: 0 !important;
     }
-
     
     /* Header Row Elements */
     .patient-header-container {
@@ -494,6 +530,159 @@ st.markdown(
         color: inherit !important;
     }
 
+    /* ── Responsive Layout: keep the dashboard usable on tablets and phones ── */
+    [data-testid="stMainBlockContainer"] {
+        max-width: 100%;
+        padding-top: 1.25rem;
+        padding-left: clamp(1rem, 3vw, 3rem);
+        padding-right: clamp(1rem, 3vw, 3rem);
+    }
+    [data-testid="stSidebar"] {
+        min-width: min(82vw, 21rem) !important;
+        max-width: min(82vw, 21rem) !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+        gap: 0.4rem;
+    }
+    [data-testid="stSidebar"] [data-testid="stSlider"],
+    [data-testid="stSidebar"] [data-testid="stToggle"] {
+        width: 100%;
+    }
+    [data-testid="stDataFrame"] {
+        overflow-x: auto;
+    }
+    [data-testid="stChatInput"] {
+        width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+        .patient-header-container {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: -12px;
+        }
+        .header-buttons {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+        .btn-secondary,
+        .btn-primary {
+            justify-content: center;
+            flex: 1 1 160px;
+        }
+        .metric-card {
+            padding: 18px;
+        }
+        .metric-value {
+            font-size: 24px;
+        }
+    }
+
+    @media (max-width: 900px) {
+        [data-testid="stMainBlockContainer"] {
+            padding-top: 0.75rem;
+            padding-left: 0.85rem;
+            padding-right: 0.85rem;
+        }
+        [data-testid="stHorizontalBlock"] {
+            flex-wrap: wrap !important;
+            gap: 1rem !important;
+        }
+        [data-testid="stHorizontalBlock"] > div {
+            min-width: min(100%, 18rem) !important;
+            flex: 1 1 18rem !important;
+        }
+        [data-testid="stHorizontalBlock"] [data-testid="stHorizontalBlock"] > div {
+            min-width: min(100%, 14rem) !important;
+            flex: 1 1 14rem !important;
+        }
+        [data-testid="stSidebar"] {
+            box-shadow: 18px 0 42px rgba(15, 23, 42, 0.24) !important;
+        }
+        [data-testid="collapsedControl"] {
+            top: 0.45rem !important;
+            min-width: 44px !important;
+            min-height: 44px !important;
+        }
+        .patient-title {
+            font-size: 24px;
+            line-height: 1.15;
+        }
+        .patient-subtitle {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .metric-card {
+            min-height: 150px;
+        }
+        [data-testid="stPlotlyChart"] {
+            overflow-x: auto;
+        }
+        [data-testid="stPlotlyChart"] > div {
+            min-width: 620px;
+        }
+    }
+
+    @media (max-width: 640px) {
+        [data-testid="stHeader"] {
+            height: 3.25rem !important;
+        }
+        [data-testid="stMainBlockContainer"] {
+            padding-left: 0.65rem;
+            padding-right: 0.65rem;
+        }
+        [data-testid="stSidebar"] {
+            min-width: 88vw !important;
+            max-width: 88vw !important;
+        }
+        .hp-brand {
+            font-size: 18px;
+        }
+        .hp-subbrand {
+            margin-bottom: 18px;
+        }
+        .patient-header-container {
+            margin-bottom: 18px;
+        }
+        .header-buttons {
+            flex-direction: column;
+            gap: 8px;
+        }
+        .btn-secondary,
+        .btn-primary {
+            width: 100%;
+        }
+        [data-testid="stHorizontalBlock"] > div,
+        [data-testid="stHorizontalBlock"] [data-testid="stHorizontalBlock"] > div {
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+        }
+        .metric-card {
+            min-height: auto;
+            padding: 16px;
+        }
+        .metric-header {
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .metric-value {
+            font-size: 26px;
+        }
+        [data-testid="stMetric"] {
+            padding: 16px;
+        }
+        [data-testid="stDataFrame"] {
+            padding: 10px;
+        }
+        [data-testid="stChatMessage"] {
+            max-width: 100%;
+        }
+        [data-testid="stChatInput"] textarea {
+            min-height: 46px !important;
+        }
+    }
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -520,18 +709,25 @@ if "backend_sync_count" not in st.session_state:
 if "backend_last_error" not in st.session_state:
     st.session_state.backend_last_error = None
 
+st.markdown('''
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+        <div class="hp-brand-icon" style="background:#2563eb; color:white; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:bold;">✚</div>
+        <div>
+            <div style="font-size:24px; font-weight:800; color:#0f172a; line-height:1;">HealthPulse AI</div>
+            <div style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-top:4px;">Practitioner Portal</div>
+        </div>
+    </div>
+''', unsafe_allow_html=True)
+
+selected_page = st.radio(
+    "Primary navigation",
+    ["Dashboard", "Patient Records", "AI Analysis", "Clinical Alerts", "Reports", "Support"],
+    horizontal=True,
+    label_visibility="collapsed",
+)
+st.markdown("<br/>", unsafe_allow_html=True)
+
 with st.sidebar:
-    st.markdown('''
-        <div class="hp-brand"><div class="hp-brand-icon">✚</div> HealthPulse AI</div>
-        <div class="hp-subbrand">Practitioner Portal</div>
-    ''', unsafe_allow_html=True)
-    
-    st.markdown('<div class="hp-section-title">Navigation</div>', unsafe_allow_html=True)
-    selected_page = st.radio(
-        "Primary navigation",
-        ["Dashboard", "Patient Records", "AI Analysis", "Clinical Alerts", "Reports", "Support"],
-        label_visibility="collapsed",
-    )
     st.markdown('<div class="hp-section-title">Monitoring</div>', unsafe_allow_html=True)
     update_interval = st.slider("Update interval (seconds)", min_value=2, max_value=8, value=3, step=1)
     st.session_state.paused = st.toggle("Pause monitoring", value=st.session_state.paused)
