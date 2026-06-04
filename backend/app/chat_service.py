@@ -5,6 +5,9 @@ Educational / demo use only - not a substitute for professional care.
 from __future__ import annotations
 
 import re
+import os
+import openai
+from app.config import settings
 
 try:
     from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
@@ -301,6 +304,36 @@ def _contextual_response(message: str, context: str | None) -> str:
 
 
 def generate_reply(user_message: str, context: str | None = None) -> tuple[str, bool]:
+    # 1. Try OpenAI if a key is configured
+    if settings.openai_api_key:
+        try:
+            client = openai.OpenAI(api_key=settings.openai_api_key)
+            system_prompt = (
+                "You are HealthPulse AI, a virtual health assistant in a practitioner portal. "
+                "Provide concise, safe, and helpful answers based on the patient's vitals context. "
+                "You are talking to a healthcare practitioner viewing the patient's dashboard, or a simulated patient. "
+                "Keep answers brief (1-3 sentences) and readable. Use markdown formatting."
+            )
+            
+            prompt_content = f"Patient Context: {context}\n" if context else ""
+            prompt_content += f"User Question: {user_message}"
+            
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt_content}
+                ],
+                max_tokens=250,
+                temperature=0.3
+            )
+            content = response.choices[0].message.content.strip()
+            return content + DISCLAIMER, True
+        except Exception as e:
+            print(f"OpenAI API error: {e}")
+            pass # Fall through to fallback logic
+
+    # 2. Fall back to local Flan-T5 model
     model, tokenizer = _get_nlp_model()
     if model is not None and tokenizer is not None:
         try:
@@ -322,4 +355,5 @@ def generate_reply(user_message: str, context: str | None = None) -> tuple[str, 
         except Exception:
             pass
 
+    # 3. Final fallback to keyword rules
     return _contextual_response(user_message, context), False

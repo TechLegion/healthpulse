@@ -30,6 +30,7 @@
         .brand-icon { background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
         .brand-title { font-size: 24px; font-weight: 800; line-height: 1; color: var(--text-main); }
         .brand-subtitle { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
         
         /* Nav */
         .nav-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2rem; }
@@ -46,6 +47,7 @@
         .btn-outline { background: var(--surface); border-color: var(--border); color: var(--text-main); }
         .btn-outline:hover { background: #f8fafc; border-color: #94a3b8;}
         .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-hover); }
         
         /* Metrics */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
@@ -56,8 +58,11 @@
         .badge { font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge.normal { background: #dcfce7; color: #166534; }
         .badge.high { background: #fee2e2; color: #991b1b; }
-        .badge.warning { background: #fef08a; color: #854d0e; }
+        .badge.warning, .badge.warn { background: #fef08a; color: #854d0e; }
         .badge.critical { background: #fee2e2; color: #991b1b; }
+        .badge.info { background: #dbeafe; color: #1e40af; }
+        .badge.pass { background: #dcfce7; color: #166534; }
+        .badge.fail { background: #fee2e2; color: #991b1b; }
         .metric-val { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
         .metric-unit { font-size: 14px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
         .metric-trend { font-size: 12px; color: var(--success); font-weight: 500; }
@@ -111,6 +116,190 @@
         .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
         input[type="text"], input[type="email"], textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-family: inherit; font-size: 14px; }
+
+        /* ===== NEW: Toast Notifications ===== */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: all;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: white;
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border-left: 4px solid var(--warning);
+            min-width: 320px;
+            max-width: 420px;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast-critical { border-left-color: var(--danger); }
+        .toast-warn { border-left-color: var(--warning); }
+        .toast-info { border-left-color: var(--primary); }
+        .toast-icon { font-size: 20px; line-height: 1; flex-shrink: 0; }
+        .toast-body { flex: 1; min-width: 0; }
+        .toast-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+        .toast-msg { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .toast-close { background: none; border: none; font-size: 18px; color: var(--text-muted); cursor: pointer; padding: 0 0 0 8px; line-height: 1; flex-shrink: 0; }
+        .toast-close:hover { color: var(--text-main); }
+
+        /* ===== NEW: Bell Badge ===== */
+        .bell-container {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            padding: 4px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .bell-container:hover { background: #f1f5f9; }
+        .bell-count {
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        /* ===== NEW: Chart Tabs ===== */
+        .chart-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .chart-tab {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .chart-tab:hover { background: #f1f5f9; }
+        .chart-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* ===== NEW: Upload Area ===== */
+        .upload-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: border-color 0.2s;
+            flex-wrap: wrap;
+        }
+        .upload-area:hover { border-color: var(--primary); }
+        .upload-area input[type="file"] { flex: 1; min-width: 180px; font-size: 13px; font-family: inherit; }
+        #upload-result { font-size: 13px; min-height: 20px; margin-bottom: 16px; }
+
+        /* ===== NEW: Clear Chat Button ===== */
+        .clear-chat-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .clear-chat-btn:hover { background: #fee2e2; color: var(--danger); border-color: var(--danger); }
+
+        /* ===== NEW: Performance Metrics Grid ===== */
+        .perf-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .perf-card {
+            text-align: center;
+            padding: 16px 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .perf-val {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .perf-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== NEW: Confusion Matrix ===== */
+        .cm-grid {
+            display: grid;
+            grid-template-columns: auto repeat(3, 1fr);
+            gap: 3px;
+            max-width: 340px;
+            margin: 16px auto;
+        }
+        .cm-cell {
+            padding: 14px 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 8px;
+        }
+        .cm-header {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 8px 4px;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+        .cm-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            letter-spacing: 0.3px;
+        }
+        .cm-diagonal { background: #dcfce7; color: #166534; }
+        .cm-off { background: #fee2e2; color: #991b1b; }
+        .cm-zero { background: #f1f5f9; color: #cbd5e1; }
     </style>
 </head>
 <body>
@@ -123,7 +312,11 @@
                     <div class="brand-subtitle">Practitioner Portal</div>
                 </div>
             </div>
-            <div>
+            <div class="header-right">
+                <div class="bell-container" id="bell-container" title="View alerts">
+                    🔔
+                    <span class="bell-count" id="bell-count">0</span>
+                </div>
                 <span id="api-status" class="badge warning" style="background:#f1f5f9;color:#64748b;">Connecting API...</span>
             </div>
         </header>
@@ -180,15 +373,24 @@
 
             <div class="main-layout">
                 <div class="card">
-                    <div class="card-title">Heart Rate Trends</div>
-                    <div class="card-subtitle">Detailed temporal analysis over the session</div>
-                    <div id="chart-container" style="height: 300px; width: 100%;"></div>
+                    <div class="card-title" id="chart-title">Heart Rate Trends</div>
+                    <div class="card-subtitle" id="chart-subtitle">Detailed temporal analysis over the session</div>
+                    <div class="chart-tabs" id="chart-tabs">
+                        <div class="chart-tab active" data-chart="hr">Heart Rate</div>
+                        <div class="chart-tab" data-chart="spo2">SpO₂</div>
+                        <div class="chart-tab" data-chart="bp">Blood Pressure</div>
+                        <div class="chart-tab" data-chart="temp">Temperature</div>
+                    </div>
+                    <div id="chart-container" style="height: 280px; width: 100%;"></div>
                 </div>
                 
                 <div class="card">
-                    <div class="card-title" style="display:flex;align-items:center;gap:8px;">
-                        <span style="background:var(--primary);color:white;padding:2px 6px;border-radius:6px;font-size:12px;">AI</span>
-                        HealthPulse AI Assistant
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                        <div class="card-title" style="display:flex;align-items:center;gap:8px;margin-bottom:0;">
+                            <span style="background:var(--primary);color:white;padding:2px 6px;border-radius:6px;font-size:12px;">AI</span>
+                            HealthPulse AI Assistant
+                        </div>
+                        <button class="clear-chat-btn" onclick="clearChatHistory()" title="Clear chat history">🗑 Clear</button>
                     </div>
                     <div style="color:var(--success);font-size:12px;margin-bottom:16px;">● Online</div>
                     <div class="chat-container">
@@ -206,6 +408,15 @@
 
         <!-- Records Section -->
         <section id="section-records" class="page-section">
+            <div class="card">
+                <div class="card-title">Upload Vitals CSV</div>
+                <div class="card-subtitle">Import patient readings from a CSV file into the system</div>
+                <div class="upload-area">
+                    <input type="file" id="csv-file-input" accept=".csv">
+                    <button class="btn btn-primary" onclick="handleCsvUpload()">⬆ Upload CSV</button>
+                </div>
+                <div id="upload-result"></div>
+            </div>
             <div class="card">
                 <div class="card-title">Historical Vitals</div>
                 <div class="card-subtitle">Complete log of all telemetry readings</div>
@@ -289,9 +500,51 @@
                     </table>
                 </div>
             </div>
+
+            <div class="main-layout">
+                <div class="card">
+                    <div class="card-title">ML Model Performance</div>
+                    <div class="card-subtitle">Trained Transformer sequence classifier evaluation metrics</div>
+                    <div class="perf-grid" id="ml-perf-grid"></div>
+                    <div class="card-title" style="font-size: 16px;">Per-Class Metrics</div>
+                    <div style="overflow-x: auto;">
+                        <table id="per-class-table">
+                            <thead>
+                                <tr>
+                                    <th>Class</th>
+                                    <th>Precision</th>
+                                    <th>Recall</th>
+                                    <th>F1 Score</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Confusion Matrix</div>
+                    <div class="card-subtitle">Predicted vs. actual class distribution</div>
+                    <div id="confusion-matrix"></div>
+                </div>
+            </div>
+
             <div class="card">
-                <div class="card-title">Active Alert Rules</div>
-                <div id="rules-container" style="font-size: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;"></div>
+                <div class="card-title">Alert Rule Evaluation</div>
+                <div class="card-subtitle">Precision, Recall, and F1 from embedded test cases</div>
+                <div class="perf-grid" id="alert-eval-grid"></div>
+                <div style="overflow-x: auto;">
+                    <table id="alert-eval-table">
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Alerts</th>
+                                <th>Predicted Alerts</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -333,15 +586,28 @@
         </section>
     </div>
 
+    <!-- Toast notification container -->
+    <div class="toast-container" id="toast-container"></div>
+
     <script>
-        const API_URL = window.location.origin + "/api"; 
+        const API_URL = (window.location.protocol === 'file:' || 
+                         ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
+                          && window.location.port !== '8000'))
+                        ? 'http://127.0.0.1:8000/api'
+                        : window.location.origin + "/api"; 
         
-        // State
+        // ==================== State ====================
         let hrHistory = Array(20).fill(75);
+        let spo2History = Array(20).fill(97);
+        let bpSysHistory = Array(20).fill(120);
+        let bpDiaHistory = Array(20).fill(80);
+        let tempHistory = Array(20).fill(36.6);
         let simulationPaused = false;
         let currentPage = 'dashboard';
+        let currentChart = 'hr';
+        let alertCount = 0;
         
-        // DOM Elements
+        // ==================== DOM Elements ====================
         const apiStatus = document.getElementById('api-status');
         const lastUpdated = document.getElementById('last-updated');
         const toggleSimBtn = document.getElementById('toggle-sim');
@@ -349,8 +615,44 @@
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
         const navPills = document.getElementById('nav-pills');
-        
-        // Page Switching
+        const bellCount = document.getElementById('bell-count');
+        const bellContainer = document.getElementById('bell-container');
+        const toastContainer = document.getElementById('toast-container');
+
+        // ==================== Toast Notifications ====================
+        const showToast = (message, severity = 'warn') => {
+            const icons = { critical: '🚨', warn: '⚠️', info: 'ℹ️' };
+            const titles = { critical: 'Critical Alert', warn: 'Warning Alert', info: 'Notification' };
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${severity}`;
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[severity] || '⚠️'}</div>
+                <div class="toast-body">
+                    <div class="toast-title">${titles[severity] || 'Alert'}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            toastContainer.appendChild(toast);
+            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        };
+
+        // ==================== Bell Badge ====================
+        const updateBellBadge = (count) => {
+            alertCount += count;
+            bellCount.textContent = alertCount > 99 ? '99+' : alertCount;
+            bellCount.style.display = alertCount > 0 ? 'flex' : 'none';
+        };
+
+        bellContainer.addEventListener('click', () => {
+            switchPage('alerts');
+        });
+
+        // ==================== Page Switching ====================
         navPills.addEventListener('click', (e) => {
             if (e.target.classList.contains('nav-pill')) {
                 const page = e.target.getAttribute('data-page');
@@ -360,15 +662,17 @@
 
         const switchPage = (page) => {
             currentPage = page;
-            // Update pills
             document.querySelectorAll('.nav-pill').forEach(p => {
                 p.classList.toggle('active', p.getAttribute('data-page') === page);
             });
-            // Update sections
             document.querySelectorAll('.page-section').forEach(s => {
                 s.classList.toggle('active', s.id === `section-${page}`);
             });
-            // Trigger page-specific load
+            // Clear bell badge when viewing alerts
+            if (page === 'alerts') {
+                alertCount = 0;
+                bellCount.style.display = 'none';
+            }
             loadPageData(page);
         };
 
@@ -379,40 +683,88 @@
             if (page === 'reports') fetchReports();
         };
 
-        // Formatters
+        // ==================== Formatters ====================
         const formatTime = () => new Date().toLocaleTimeString('en-US', { hour12: false });
         const formatDt = (iso) => new Date(iso).toLocaleString('en-US', { hour12: false });
 
-        // Chart
-        const initChart = () => {
-            const trace1 = {
-                y: hrHistory,
-                type: 'scatter',
-                mode: 'lines',
-                line: { color: '#3b82f6', width: 2.5, shape: 'spline', smoothing: 1.3 },
-                fill: 'tozeroy',
-                fillcolor: 'rgba(59,130,246,0.10)'
+        // ==================== Multi-Vital Charts ====================
+        const chartMeta = {
+            hr:   { title: 'Heart Rate Trends',       subtitle: 'Beats per minute over the session' },
+            spo2: { title: 'Oxygen Saturation Trends', subtitle: 'SpO₂ percentage over the session' },
+            bp:   { title: 'Blood Pressure Trends',    subtitle: 'Systolic & diastolic (mmHg) over the session' },
+            temp: { title: 'Temperature Trends',       subtitle: 'Body temperature (°C) over the session' },
+        };
+
+        const getChartTraces = (tab) => {
+            const line = (color, w) => ({ color, width: w || 2.5, shape: 'spline', smoothing: 1.3 });
+            const configs = {
+                hr: [{
+                    y: hrHistory, type: 'scatter', mode: 'lines', name: 'Heart Rate',
+                    line: line('#3b82f6'), fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.10)'
+                }],
+                spo2: [{
+                    y: spo2History, type: 'scatter', mode: 'lines', name: 'SpO₂',
+                    line: line('#10b981'), fill: 'tozeroy', fillcolor: 'rgba(16,185,129,0.10)'
+                }],
+                bp: [
+                    { y: bpSysHistory, type: 'scatter', mode: 'lines', name: 'Systolic',
+                      line: line('#8b5cf6'), fill: 'tozeroy', fillcolor: 'rgba(139,92,246,0.06)' },
+                    { y: bpDiaHistory, type: 'scatter', mode: 'lines', name: 'Diastolic',
+                      line: line('#a78bfa', 2) }
+                ],
+                temp: [{
+                    y: tempHistory, type: 'scatter', mode: 'lines', name: 'Temperature',
+                    line: line('#f59e0b'), fill: 'tozeroy', fillcolor: 'rgba(245,158,11,0.10)'
+                }],
             };
+            return configs[tab] || configs.hr;
+        };
+
+        const getChartRange = (tab) => {
+            const ranges = { hr: [40, 160], spo2: [85, 100], bp: [40, 200], temp: [34, 40] };
+            return ranges[tab] || ranges.hr;
+        };
+
+        const renderChart = () => {
+            const traces = getChartTraces(currentChart);
             const layout = {
                 margin: { l: 30, r: 10, t: 10, b: 30 },
                 xaxis: { showgrid: false },
-                yaxis: { showgrid: true, gridcolor: '#f1f5f9', range: [40, 140] },
+                yaxis: { showgrid: true, gridcolor: '#f1f5f9', range: getChartRange(currentChart) },
                 paper_bgcolor: 'transparent',
                 plot_bgcolor: 'transparent',
-                font: { family: 'Inter', color: '#64748b' }
+                font: { family: 'Inter', color: '#64748b' },
+                showlegend: traces.length > 1,
+                legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(255,255,255,0.8)', bordercolor: '#e2e8f0', borderwidth: 1 },
             };
-            Plotly.newPlot('chart-container', [trace1], layout, {displayModeBar: false, responsive: true});
-        };
-        
-        const updateChart = (newHr) => {
-            hrHistory.push(newHr);
-            if(hrHistory.length > 20) hrHistory.shift();
-            if(currentPage === 'dashboard') {
-                Plotly.update('chart-container', {y: [hrHistory]});
-            }
+            Plotly.react('chart-container', traces, layout, { displayModeBar: false, responsive: true });
         };
 
-        // API interaction
+        const initChart = () => renderChart();
+
+        // Chart tab switching
+        document.getElementById('chart-tabs').addEventListener('click', (e) => {
+            if (e.target.classList.contains('chart-tab')) {
+                currentChart = e.target.dataset.chart;
+                document.querySelectorAll('.chart-tab').forEach(t => t.classList.toggle('active', t.dataset.chart === currentChart));
+                const meta = chartMeta[currentChart];
+                document.getElementById('chart-title').textContent = meta.title;
+                document.getElementById('chart-subtitle').textContent = meta.subtitle;
+                renderChart();
+            }
+        });
+
+        const updateVitalHistories = (vital) => {
+            const push = (arr, val, fallback) => { arr.push(val != null ? val : arr[arr.length - 1] || fallback); if (arr.length > 20) arr.shift(); };
+            push(hrHistory, vital.heart_rate, 75);
+            push(spo2History, vital.spo2, 97);
+            push(bpSysHistory, vital.bp_systolic, 120);
+            push(bpDiaHistory, vital.bp_diastolic, 80);
+            push(tempHistory, vital.body_temp_c, 36.6);
+            if (currentPage === 'dashboard') renderChart();
+        };
+
+        // ==================== API Interaction ====================
         const fetchSummary = async () => {
             try {
                 const res = await fetch(`${API_URL}/summary`);
@@ -431,7 +783,17 @@
                     document.getElementById('hr-badge').innerText = (v.heart_rate > 100 || v.heart_rate < 60) ? "HIGH" : "NORMAL";
                     document.getElementById('hr-badge').className = (v.heart_rate > 100 || v.heart_rate < 60) ? "badge high" : "badge normal";
                     
-                    updateChart(v.heart_rate);
+                    // Update badge states for all vitals
+                    document.getElementById('temp-badge').innerText = (v.body_temp_c > 38 || v.body_temp_c < 35.5) ? "HIGH" : "NORMAL";
+                    document.getElementById('temp-badge').className = (v.body_temp_c > 38 || v.body_temp_c < 35.5) ? "badge high" : "badge normal";
+                    
+                    document.getElementById('o2-badge').innerText = v.spo2 < 92 ? "LOW" : "NORMAL";
+                    document.getElementById('o2-badge').className = v.spo2 < 92 ? "badge high" : "badge normal";
+                    
+                    document.getElementById('bp-badge').innerText = (v.bp_systolic > 140 || v.bp_diastolic > 90) ? "HIGH" : "NORMAL";
+                    document.getElementById('bp-badge').className = (v.bp_systolic > 140 || v.bp_diastolic > 90) ? "badge high" : "badge normal";
+                    
+                    updateVitalHistories(v);
                 }
                 
                 if (data.prediction) {
@@ -477,9 +839,16 @@
                 <div class="driver-card">⚠ ${d}</div>
             `).join('');
             
-            document.getElementById('analysis-trends').innerHTML = data.trends.map(t => `
-                <div style="margin-bottom:8px;">• ${t}</div>
-            `).join('');
+            const trendLabels = { heart_rate: 'Heart Rate', spo2: 'SpO₂', bp_systolic: 'BP Systolic', bp_diastolic: 'BP Diastolic', body_temp_c: 'Temperature' };
+            document.getElementById('analysis-trends').innerHTML = Object.entries(data.trends).map(([key, val]) => {
+                const label = trendLabels[key] || key;
+                const arrow = val > 0 ? '↗' : val < 0 ? '↘' : '→';
+                const color = Math.abs(val) > 1 ? 'var(--warning)' : 'var(--text-muted)';
+                return `<div style="margin-bottom:8px;display:flex;justify-content:space-between;"><span>• ${label}</span><span style="color:${color};font-weight:600;">${arrow} ${val.toFixed(3)}/reading</span></div>`;
+            }).join('') + (data.next_estimate ? '<div style="margin-top:16px;font-weight:600;color:var(--text-main);margin-bottom:8px;">Next Estimates</div>' + Object.entries(data.next_estimate).map(([key, val]) => {
+                const label = trendLabels[key] || key;
+                return val != null ? `<div style="margin-bottom:6px;display:flex;justify-content:space-between;"><span>${label}</span><span style="font-weight:600;">${val}</span></div>` : '';
+            }).join('') : '');
         };
 
         const fetchAlerts = async () => {
@@ -500,25 +869,134 @@
             const res = await fetch(`${API_URL}/evaluation`);
             const data = await res.json();
             
+            // --- Comparison table (existing) ---
             const tbody = document.querySelector('#eval-table tbody');
             tbody.innerHTML = data.comparison.map(c => `
                 <tr>
                     <td style="font-weight:600;">${c.system}</td>
                     <td>${c.real_time_monitoring ? '✅' : '❌'}</td>
                     <td>${c.patient_chat ? '✅' : '❌'}</td>
-                    <td>${c.ml_prediction}</td>
-                    <td>${c.explainable_alerts}</td>
+                    <td>${c.ml_prediction === true ? '✅' : (c.ml_prediction === false ? '❌' : c.ml_prediction)}</td>
+                    <td>${c.explainable_alerts === true ? '✅' : (c.explainable_alerts === false ? '❌' : c.explainable_alerts)}</td>
                 </tr>
             `).join('');
 
-            document.getElementById('rules-container').innerHTML = Object.entries(data.alert_rules).map(([name, rule]) => `
-                <div style="padding:10px; border:1px solid var(--border); border-radius:8px;">
-                    <div style="font-weight:600; color:var(--primary); margin-bottom:4px;">${name}</div>
-                    <div style="font-size:12px; color:var(--text-muted);">${rule.description}</div>
-                </div>
-            `).join('');
+            // --- ML Model Performance (new) ---
+            if (data.ml_model) {
+                const ml = data.ml_model;
+                document.getElementById('ml-perf-grid').innerHTML = `
+                    <div class="perf-card">
+                        <div class="perf-val">${(ml.accuracy * 100).toFixed(1)}%</div>
+                        <div class="perf-label">Accuracy</div>
+                    </div>
+                    <div class="perf-card">
+                        <div class="perf-val">${(ml.macro_f1 * 100).toFixed(1)}%</div>
+                        <div class="perf-label">Macro F1</div>
+                    </div>
+                    <div class="perf-card">
+                        <div class="perf-val">${ml.test_records.toLocaleString()}</div>
+                        <div class="perf-label">Test Records</div>
+                    </div>
+                `;
+
+                // Per-class metrics table
+                if (ml.per_class) {
+                    const pcTbody = document.querySelector('#per-class-table tbody');
+                    pcTbody.innerHTML = Object.entries(ml.per_class).map(([cls, m]) => `
+                        <tr>
+                            <td style="font-weight:600;text-transform:capitalize;">${cls}</td>
+                            <td>${(m.precision * 100).toFixed(1)}%</td>
+                            <td>${(m.recall * 100).toFixed(1)}%</td>
+                            <td>${(m.f1 * 100).toFixed(1)}%</td>
+                        </tr>
+                    `).join('');
+                }
+
+                // Confusion matrix
+                if (ml.confusion_matrix) {
+                    const classes = Object.keys(ml.confusion_matrix);
+                    let html = '<div class="cm-grid">';
+                    // Header row
+                    html += '<div class="cm-header"></div>';
+                    classes.forEach(c => { html += `<div class="cm-header">${c}</div>`; });
+                    // Data rows
+                    classes.forEach(actual => {
+                        html += `<div class="cm-label">${actual}</div>`;
+                        classes.forEach(predicted => {
+                            const val = ml.confusion_matrix[actual][predicted] || 0;
+                            const isDiag = actual === predicted;
+                            const cls = val === 0 ? 'cm-zero' : (isDiag ? 'cm-diagonal' : 'cm-off');
+                            html += `<div class="cm-cell ${cls}">${val}</div>`;
+                        });
+                    });
+                    html += '</div>';
+                    html += '<div style="text-align:center;font-size:11px;color:var(--text-muted);margin-top:8px;">Rows: Actual &nbsp;•&nbsp; Columns: Predicted</div>';
+                    document.getElementById('confusion-matrix').innerHTML = html;
+                }
+            }
+
+            // --- Alert Rule Evaluation (fixed) ---
+            if (data.alert_rules) {
+                const ar = data.alert_rules;
+                document.getElementById('alert-eval-grid').innerHTML = `
+                    <div class="perf-card">
+                        <div class="perf-val">${(ar.precision * 100).toFixed(1)}%</div>
+                        <div class="perf-label">Precision</div>
+                    </div>
+                    <div class="perf-card">
+                        <div class="perf-val">${(ar.recall * 100).toFixed(1)}%</div>
+                        <div class="perf-label">Recall</div>
+                    </div>
+                    <div class="perf-card">
+                        <div class="perf-val">${(ar.f1 * 100).toFixed(1)}%</div>
+                        <div class="perf-label">F1 Score</div>
+                    </div>
+                `;
+
+                if (ar.cases) {
+                    const aeTbody = document.querySelector('#alert-eval-table tbody');
+                    aeTbody.innerHTML = ar.cases.map(c => `
+                        <tr>
+                            <td style="font-weight:500;text-transform:capitalize;">${c.name}</td>
+                            <td>${c.expected.length ? c.expected.join(', ') : '<span style="color:var(--text-muted);">—</span>'}</td>
+                            <td>${c.predicted.length ? c.predicted.join(', ') : '<span style="color:var(--text-muted);">—</span>'}</td>
+                            <td><span class="badge ${c.passed ? 'pass' : 'fail'}">${c.passed ? 'PASS' : 'FAIL'}</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
         };
 
+        // ==================== CSV Upload ====================
+        const handleCsvUpload = async () => {
+            const fileInput = document.getElementById('csv-file-input');
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('Please select a CSV file first.', 'info');
+                return;
+            }
+            const resultEl = document.getElementById('upload-result');
+            resultEl.innerHTML = '<span style="color:var(--text-muted);">⏳ Uploading...</span>';
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const res = await fetch(`${API_URL}/vitals/upload-csv`, { method: 'POST', body: formData });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.detail || 'Upload failed');
+                }
+                const data = await res.json();
+                resultEl.innerHTML = `<span style="color:var(--success);">✓ Imported ${data.rows_imported} rows, ${data.alerts_generated} alerts generated${data.rows_skipped ? `, ${data.rows_skipped} skipped` : ''}</span>`;
+                showToast(`CSV uploaded: ${data.rows_imported} readings imported`, 'info');
+                fetchRecords();
+                fileInput.value = '';
+            } catch (err) {
+                resultEl.innerHTML = `<span style="color:var(--danger);">✗ ${err.message}</span>`;
+                showToast(`Upload failed: ${err.message}`, 'warn');
+            }
+        };
+
+        // ==================== Data Export ====================
         const exportData = async () => {
             const res = await fetch(`${API_URL}/vitals?limit=1000`);
             const data = await res.json();
@@ -539,32 +1017,44 @@
             document.body.removeChild(a);
         };
 
+        // ==================== Vital Simulation ====================
         const generateVital = async () => {
             if (simulationPaused) return;
-            const lastHr = hrHistory[hrHistory.length-1] || 75;
-            const newHr = Math.max(60, Math.min(120, lastHr + (Math.random() * 6 - 3)));
-            
+
+            // Random walk for smoother, more realistic chart lines
+            const walk = (last, delta, min, max) => Math.max(min, Math.min(max, last + (Math.random() * delta * 2 - delta)));
+
             const payload = {
-                heart_rate: Math.round(newHr),
-                bp_systolic: Math.round(120 + (Math.random()*10 - 5)),
-                bp_diastolic: Math.round(80 + (Math.random()*6 - 3)),
-                spo2: Math.round(98 + (Math.random()*2 - 1)),
-                body_temp_c: Number((36.5 + (Math.random()*0.5 - 0.25)).toFixed(1)),
+                heart_rate: Math.round(walk(hrHistory[hrHistory.length - 1] || 75, 3, 55, 125)),
+                bp_systolic: Math.round(walk(bpSysHistory[bpSysHistory.length - 1] || 120, 5, 100, 160)),
+                bp_diastolic: Math.round(walk(bpDiaHistory[bpDiaHistory.length - 1] || 80, 3, 60, 100)),
+                spo2: Math.round(walk(spo2History[spo2History.length - 1] || 98, 1, 90, 100)),
+                body_temp_c: Number(walk(tempHistory[tempHistory.length - 1] || 36.5, 0.15, 35.5, 38.0).toFixed(1)),
                 source: "html-client"
             };
             
             try {
-                await fetch(`${API_URL}/vitals`, {
+                const res = await fetch(`${API_URL}/vitals`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
                 });
+                const result = await res.json();
+
+                // Fire toast notifications for any new alerts
+                if (result.alerts && result.alerts.length > 0) {
+                    result.alerts.forEach(alert => {
+                        showToast(alert.message, alert.severity);
+                    });
+                    updateBellBadge(result.alerts.length);
+                }
+
                 await fetchSummary();
                 if (currentPage !== 'dashboard') loadPageData(currentPage);
             } catch (err) {}
         };
 
-        // Chat
+        // ==================== Chat ====================
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const msg = chatInput.value.trim();
@@ -598,15 +1088,52 @@
             }
         });
 
-        // Controls
+        // ==================== Chat History Persistence ====================
+        const loadChatHistory = async () => {
+            try {
+                const res = await fetch(`${API_URL}/chat/history?limit=50`);
+                if (!res.ok) return;
+                const messages = await res.json();
+                if (messages.length === 0) return;
+                // Replace default greeting with persisted history
+                chatHistory.innerHTML = '';
+                messages.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = `chat-msg ${m.role}`;
+                    if (m.role === 'assistant') {
+                        div.innerHTML = marked.parse(m.content);
+                    } else {
+                        div.textContent = m.content;
+                    }
+                    chatHistory.appendChild(div);
+                });
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            } catch (err) {
+                // Silently fail — keep the default greeting
+                console.error('Failed to load chat history:', err);
+            }
+        };
+
+        const clearChatHistory = async () => {
+            try {
+                await fetch(`${API_URL}/chat/history`, { method: 'DELETE' });
+                chatHistory.innerHTML = '<div class="chat-msg assistant">Hello! I\'m monitoring Sarah\'s vitals. Ask me anything about her current status.</div>';
+                showToast('Chat history cleared.', 'info');
+            } catch (err) {
+                console.error('Failed to clear chat history:', err);
+            }
+        };
+
+        // ==================== Controls ====================
         toggleSimBtn.addEventListener('click', () => {
             simulationPaused = !simulationPaused;
             toggleSimBtn.innerText = simulationPaused ? "▶ Resume" : "⏸ Pause";
         });
 
-        // Setup
+        // ==================== Initialisation ====================
         initChart();
         fetchSummary();
+        loadChatHistory();
         setInterval(generateVital, 3000); 
     </script>
 </body>

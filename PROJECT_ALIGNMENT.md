@@ -6,20 +6,20 @@ for real-time patient monitoring and support.
 ## Objective Mapping
 
 1. Design an intelligent system for patient interaction.
-   - Implemented by the Streamlit assistant in `app.py`.
-   - Implemented by the backend `POST /api/chat` endpoint when API mode is enabled.
+   - Implemented by the unified HTML/JS assistant in the `frontend/` directory.
+   - Implemented by the backend `POST /api/chat` endpoint.
    - OpenAI is optional; safe fallback responses are always available.
 
 2. Develop a real-time monitoring framework.
-   - `app.py` simulates live vitals, updates the dashboard, and syncs readings
-     to the FastAPI backend when it is online.
+   - The frontend dashboard simulates live vitals, updates the UI, and syncs
+     readings to the FastAPI backend.
    - Backend endpoints ingest, store, list, upload, and simulate vital readings.
 
 3. Implement machine learning models for health prediction.
    - `backend/app/prediction_engine.py` provides an explainable MVP prediction
      layer: risk score, risk level, trend slopes, and next-value estimates.
    - `backend/scripts/train_health_model.py` generates a labeled synthetic
-     vitals dataset and trains a Gaussian Naive Bayes classifier.
+     vitals dataset and trains a PyTorch Transformer sequence classifier.
    - `backend/app/ml_model.py` loads the saved trained model and returns a
      predicted class, confidence score, and class probabilities.
    - This is a trained baseline model, not a clinical-grade model. It is
@@ -43,8 +43,7 @@ for real-time patient monitoring and support.
 ## Recommended Next Research Extensions
 
 - Replace or augment the deterministic risk score with a trained anomaly model.
-- Replace or augment the Gaussian Naive Bayes baseline with Random Forest,
-  Logistic Regression, LSTM, or a transformer model trained on a larger dataset.
+- Replace or augment the Transformer model with more complex architectures (e.g., Bi-LSTM, GPT-based vitals analysis) trained on a larger real-world dataset.
 - Add a real-world labeled CSV dataset for evaluation beyond the embedded demo
   and synthetic cases.
 - Persist chat history and assistant safety outcomes for usability analysis.

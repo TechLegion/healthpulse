@@ -8,9 +8,9 @@ device and must not be used for diagnosis, treatment decisions, or emergency
 care.
 
 Project layout
-- app.py: main Streamlit dashboard and assistant UI
-- archive/app_experiment.py: experimental/test Streamlit variant kept for reference
+- frontend/: Modern HTML/JS dashboard and assistant UI (served by the backend)
 - backend/: FastAPI + SQLite API
+- backend/app/main.py: API entry point and static file server
 - backend/app/prediction_engine.py: explainable MVP risk scoring and trend forecast
 - backend/app/ml_model.py: PyTorch Transformer sequence classifier loader
 - backend/app/chat_service.py: NLP chat using Hugging Face Flan-T5-small with keyword fallbacks
@@ -26,36 +26,20 @@ Requirements
 - Fallback keyword responses work when model dependencies are unavailable
 
 Recommended setup
-- Use `venv/` for the Streamlit UI.
-- Use `backend/.venv/` for the FastAPI backend.
-- Keeping them separate avoids package conflicts between Streamlit's web server
-  stack and FastAPI's Starlette version.
-
-Install UI dependencies
-1. Activate the project UI venv.
-   .\venv\Scripts\Activate.ps1
-2. Install UI dependencies.
-   pip install -r requirements.txt
-
-Install backend dependencies
 1. Activate the backend venv.
    .\backend\.venv\Scripts\Activate.ps1
-2. Install backend dependencies.
+2. Install dependencies.
    pip install -r requirements.txt
 3. Configure environment variables.
-   Copy backend\.env.example to backend\.env or create a root .env for app.py.
+   Copy backend\.env.example to backend\.env or create a root .env.
 
-Run the Streamlit dashboard
-1. Open a terminal at the project root.
-2. Run:
-   .\venv\Scripts\python.exe -m streamlit run app.py
-
-Run the FastAPI backend
+Run the application
 1. Open a terminal in the backend folder.
 2. Run:
    .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 3. Open:
-   http://127.0.0.1:8000/docs
+   http://127.0.0.1:8000
+   (The backend serves the frontend at the root URL)
 
 Backend endpoints
 - GET /api/health
@@ -84,17 +68,15 @@ Accepted aliases:
 - recorded_at: timestamp, time
 
 Quick demo flow
-1. Start the FastAPI backend in one terminal.
-2. Start the Streamlit dashboard in another terminal.
-3. Confirm the sidebar says "FastAPI backend connected".
-4. Watch simulated vitals update and sync to the backend.
-5. Inspect alerts, risk score, and the risk trend.
-6. Ask the assistant a status or symptom question.
-7. Open /api/summary and /api/evaluation in the backend docs for defense/demo evidence.
+1. Start the FastAPI backend.
+2. Open http://127.0.0.1:8000 in your browser.
+3. Watch simulated vitals update and sync to the backend.
+4. Inspect alerts, risk score, and the risk trend.
+5. Ask the assistant a status or symptom question in the chat interface.
+6. Open /api/summary and /api/evaluation for defense/demo evidence.
 
 Train or refresh the ML model
 1. Activate the backend venv.
-   .\backend\.venv\Scripts\Activate.ps1
 2. Run:
    python backend\scripts\train_health_model.py
 3. Generated outputs:
@@ -103,9 +85,9 @@ Train or refresh the ML model
    - backend\ml\model_metrics.json
 
 Implementation objective coverage
-- Patient interaction: Streamlit assistant with persistent chat history, backed by POST /api/chat when the API is running.
-- Real-time monitoring: simulated vitals in app.py, synced into backend ingestion endpoints.
-- Health prediction: PyTorch Transformer sequence classifier plus explainable risk score and next-value estimate in /api/prediction.
+- Patient interaction: Unified HTML/JS assistant with persistent chat history.
+- Real-time monitoring: Dashboard with live vitals simulation and ingestion.
+- Health prediction: PyTorch Transformer sequence classifier plus explainable risk score and next-value estimate.
 - Evaluation metrics: /api/evaluation reports alert-rule precision/recall/F1 and trained model accuracy/macro-F1.
 - Comparison readiness: /api/evaluation and PROJECT_ALIGNMENT.md summarize how the MVP compares with common solution types.
 

@@ -25,13 +25,13 @@ Develop and evaluate an AI-powered virtual health assistant for real-time patien
 
 ## Current Codebase Mapping
 
-- `app.py` is the main Streamlit dashboard and chatbot demo.
+- `frontend/index.html` is the main dashboard and chatbot interface.
 - `archive/app_experiment.py` is an experimental/test Streamlit variant retained for reference.
 - `backend/app/main.py` exposes ingestion, simulation, upload, chat, prediction, summary, and evaluation APIs.
 - `backend/app/alert_engine.py` contains the explainable rule-based alert baseline.
 - `backend/app/prediction_engine.py` adds an MVP prediction layer with risk score, risk level, trends, and next-value estimates.
-- `backend/app/ml_model.py` loads a trained Gaussian Naive Bayes baseline for normal/warning/critical risk classification.
-- `backend/scripts/train_health_model.py` generates a labeled synthetic vitals dataset and trains the baseline model.
+- `backend/app/ml_model.py` loads a trained PyTorch Transformer sequence classifier for normal/warning/critical risk classification.
+- `backend/scripts/train_health_model.py` generates a labeled synthetic vitals dataset and trains the Transformer model.
 - `backend/app/evaluation.py` reports precision, recall, and F1 for embedded demo alert cases.
 - `backend/ml/model_metrics.json` reports trained model accuracy, macro-F1, and per-class metrics.
 - `PROJECT_ALIGNMENT.md` explains how the implementation maps to the five objectives and what remains for a full study.

@@ -22,6 +22,20 @@ backend/ml/health_risk_model.pth
 data/synthetic_labeled_sequences.json
 data/synthetic_labeled_vitals.csv
 
-# Personal / non-project files
-akin 1-3.docx
-akin.txt
+# Docs / non-code files — none of these belong in source control
+*.docx
+*.doc
+*.pdf
+*.pptx
+*.ppt
+*.xlsx
+*.xls
+*.odt
+*.rtf
+*.pages
+*.numbers
+*.key
+*.txt
+# ...but keep pip dependency files
+!requirements.txt
+!requirements*.txt
