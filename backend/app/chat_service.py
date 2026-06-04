@@ -305,7 +305,7 @@ def _contextual_response(message: str, context: str | None) -> str:
 
 def generate_reply(user_message: str, context: str | None = None) -> tuple[str, bool]:
     # 1. Try OpenAI if a key is configured
-    if settings.openai_api_key:
+    if settings.openai_configured:
         try:
             client = openai.OpenAI(api_key=settings.openai_api_key)
             system_prompt = (
@@ -330,8 +330,14 @@ def generate_reply(user_message: str, context: str | None = None) -> tuple[str, 
             content = response.choices[0].message.content.strip()
             return content + DISCLAIMER, True
         except Exception as e:
-            print(f"OpenAI API error: {e}")
-            pass # Fall through to fallback logic
+            err_msg = str(e)
+            print(f"OpenAI API error: {err_msg}")
+            # Surface the error in the reply so it's visible in the UI
+            return (
+                f"⚠️ OpenAI is configured but returned an error: `{err_msg}`. "
+                "Check that your `OPENAI_API_KEY` Railway variable is correct and the key has available quota.",
+                False,
+            )
 
     # 2. Fall back to local Flan-T5 model
     model, tokenizer = _get_nlp_model()

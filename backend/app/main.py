@@ -91,6 +91,18 @@ def health() -> dict:
     return {"status": "ok"}
 
 
+@app.get("/api/debug")
+def debug() -> dict:
+    """Verify environment variables are loaded correctly (does NOT expose secret values)."""
+    key = settings.openai_api_key or ""
+    return {
+        "openai_configured": settings.openai_configured,
+        "openai_key_prefix": key[:7] + "..." if len(key) > 7 else "(not set)",
+        "database_url_driver": settings.database_url.split(":")[0] if settings.database_url else "(not set)",
+        "cors_origins": settings.cors_origins,
+    }
+
+
 def _vital_to_out(v: models.VitalReading) -> VitalOut:
     return VitalOut.model_validate(v)
 
