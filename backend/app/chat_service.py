@@ -304,7 +304,41 @@ def _contextual_response(message: str, context: str | None) -> str:
 
 
 def generate_reply(user_message: str, context: str | None = None) -> tuple[str, bool]:
-    # 1. Try OpenAI if a key is configured
+    # 0. Try Groq if configured (prioritized as per user request)
+    if settings.groq_configured:
+        try:
+            # Groq is fully compatible with the OpenAI python client!
+            client = openai.OpenAI(
+                api_key=settings.groq_api_key,
+                base_url="https://api.groq.com/openai/v1"
+            )
+            system_prompt = (
+                "You are HealthPulse AI, a virtual health assistant in a practitioner portal. "
+                "Provide concise, safe, and helpful answers based on the patient's vitals context. "
+                "You are talking to a healthcare practitioner viewing the patient's dashboard, or a simulated patient. "
+                "Keep answers brief (1-3 sentences) and readable. Use markdown formatting."
+            )
+            
+            prompt_content = f"Patient Context: {context}\n" if context else ""
+            prompt_content += f"User Question: {user_message}"
+            
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt_content}
+                ],
+                max_tokens=250,
+                temperature=0.3
+            )
+            content = response.choices[0].message.content.strip()
+            return content + DISCLAIMER, True
+        except Exception as e:
+            err_msg = str(e)
+            print(f"Groq API error: {err_msg}")
+            # Fall through to the next fallback
+
+    # 1. Try OpenAI if a key is configured (and Groq wasn't configured)
     if settings.openai_configured:
         try:
             client = openai.OpenAI(api_key=settings.openai_api_key)
@@ -332,12 +366,7 @@ def generate_reply(user_message: str, context: str | None = None) -> tuple[str, 
         except Exception as e:
             err_msg = str(e)
             print(f"OpenAI API error: {err_msg}")
-            # Surface the error in the reply so it's visible in the UI
-            return (
-                f"⚠️ OpenAI is configured but returned an error: `{err_msg}`. "
-                "Check that your `OPENAI_API_KEY` Railway variable is correct and the key has available quota.",
-                False,
-            )
+            # Fall through to the next fallback
 
     # 2. Fall back to local Flan-T5 model
     model, tokenizer = _get_nlp_model()
