@@ -11,13 +11,13 @@ from .models import AlertEvent, AlertSeverity, VitalReading
 
 @dataclass(frozen=True)
 class Thresholds:
-    hr_min: float = 40.0
-    hr_max: float = 140.0
+    hr_min: float = 50.0
+    hr_max: float = 120.0
     spo2_min: float = 90.0
-    bp_sys_max: float = 200.0
-    bp_dia_max: float = 120.0
-    temp_c_min: float = 34.0
-    temp_c_max: float = 40.0
+    bp_sys_max: float = 140.0
+    bp_dia_max: float = 90.0
+    temp_c_min: float = 35.0
+    temp_c_max: float = 38.0
 
 
 def evaluate_vital(v: VitalReading, t: Thresholds | None = None) -> list[AlertEvent]:
