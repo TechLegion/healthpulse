@@ -1025,11 +1025,11 @@
             const walk = (last, delta, min, max) => Math.max(min, Math.min(max, last + (Math.random() * delta * 2 - delta)));
 
             const payload = {
-                heart_rate: Math.round(walk(hrHistory[hrHistory.length - 1] || 75, 3, 55, 125)),
-                bp_systolic: Math.round(walk(bpSysHistory[bpSysHistory.length - 1] || 120, 5, 100, 160)),
-                bp_diastolic: Math.round(walk(bpDiaHistory[bpDiaHistory.length - 1] || 80, 3, 60, 100)),
-                spo2: Math.round(walk(spo2History[spo2History.length - 1] || 98, 1, 90, 100)),
-                body_temp_c: Number(walk(tempHistory[tempHistory.length - 1] || 36.5, 0.15, 35.5, 38.0).toFixed(1)),
+                heart_rate: Math.round(walk(hrHistory[hrHistory.length - 1] || 75, 3, 55, 115)),
+                bp_systolic: Math.round(walk(bpSysHistory[bpSysHistory.length - 1] || 120, 5, 100, 135)),
+                bp_diastolic: Math.round(walk(bpDiaHistory[bpDiaHistory.length - 1] || 80, 3, 60, 85)),
+                spo2: Math.round(walk(spo2History[spo2History.length - 1] || 98, 1, 92, 100)),
+                body_temp_c: Number(walk(tempHistory[tempHistory.length - 1] || 36.5, 0.15, 35.5, 37.5).toFixed(1)),
                 source: "html-client"
             };
             
